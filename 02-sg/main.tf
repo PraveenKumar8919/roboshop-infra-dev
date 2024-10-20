@@ -166,6 +166,15 @@ resource "aws_security_group_rule" "redis_user" {
   security_group_id        = module.redis.sg_id
 }
 
+resource "aws_security_group_rule" "redis_vpn" {
+  source_security_group_id = module.vpn.sg_id
+  type                     = "ingress"
+  from_port                = 22
+  to_port                  = 22
+  protocol                 = "tcp"
+  security_group_id        = module.redis.sg_id
+}
+
 resource "aws_security_group_rule" "redis_cart" {
   source_security_group_id = module.cart.sg_id
   type                     = "ingress"
