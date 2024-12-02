@@ -118,6 +118,16 @@ module "app_alb" {
   #sg_ingress_rules = var.mongodb_sg_ingress_rules
 }
 
+module "web_alb" {
+  source         = "../../terraformAws-sg-module"
+  project_name   = var.project_name
+  environment    = var.environment
+  sg_description = "SG for web alb"
+  vpc_id         = data.aws_ssm_parameter.vpc_id.value
+  sg_name        = "web-alb"
+  #sg_ingress_rules = var.mongodb_sg_ingress_rules
+}
+
 resource "aws_security_group_rule" "app_alb_vpn" {
   source_security_group_id = module.vpn.sg_id
   type                     = "ingress"
@@ -125,6 +135,15 @@ resource "aws_security_group_rule" "app_alb_vpn" {
   to_port                  = 80
   protocol                 = "tcp"
   security_group_id        = module.app_alb.sg_id
+}
+
+resource "aws_security_group_rule" "web_alb_internet" {
+  cidr_blocks = [ "0.0.0.0/0" ]
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  security_group_id        = module.web_alb.sg_id
 }
 
 #openvpn
