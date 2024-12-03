@@ -1,17 +1,9 @@
 resource "aws_lb" "app-alb" {
   name               = "${local.name}-${var.tags.Component}"
-  internal           = false
+  internal           = true
   load_balancer_type = "application"
   security_groups    = [data.aws_ssm_parameter.app_alb_sg_id]
   subnets            = split(",", data.aws_ssm_parameter.private_subnet_ids.value)
-
-  #enable_deletion_protection = true - I am commenting it bcz I will delete all resources after creating.
-
-#   access_logs {
-#     bucket  = aws_s3_bucket.lb_logs.id
-#     prefix  = "test-lb"
-#     enabled = true
-#   }
 
   tags = merge(
     var.common_tags,
